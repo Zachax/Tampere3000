@@ -7,7 +7,7 @@ public class ShipInsideDetector : MonoBehaviour {
     private GameManager GM;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
         GM = GameObject.Find("GameManager").GetComponent<GameManager>();
 	}
 	

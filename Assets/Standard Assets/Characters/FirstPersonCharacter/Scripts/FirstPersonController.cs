@@ -43,6 +43,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private bool m_Jumping;
         private AudioSource m_AudioSource;
 
+        // Flag for being still in control
+        public bool inControl;
+
         // Use this for initialization
         private void Start()
         {
@@ -108,78 +111,80 @@ namespace UnityStandardAssets.Characters.FirstPerson
             desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
 
             
-            
-			if (Input.GetButton ("BoostUp")) {
-				//print ("BoostUp");
-				//m_MoveDir.y = 4;
-				desiredMove = desiredMove + (m_Camera.transform.rotation * Vector3.up);
-			} else {
-				m_MoveDir.y *= 0.96f;
-			}
+            if (inControl) {
+    			if (Input.GetButton ("BoostUp")) {
+    				//print ("BoostUp");
+    				//m_MoveDir.y = 4;
+    				desiredMove = desiredMove + (m_Camera.transform.rotation * Vector3.up);
+    			} else {
+    				m_MoveDir.y *= 0.96f;
+    			}
 
 
-            if (Input.GetButton("BoostDown"))
+                if (Input.GetButton("BoostDown"))
 
-            {
-                //print("BoostDown");
-                //m_MoveDir.y = -4;
-				desiredMove = desiredMove + (m_Camera.transform.rotation * Vector3.down);
-			} else {
-				m_MoveDir.y *= 0.96f;
-			}
+                {
+                    //print("BoostDown");
+                    //m_MoveDir.y = -4;
+    				desiredMove = desiredMove + (m_Camera.transform.rotation * Vector3.down);
+    			} else {
+    				m_MoveDir.y *= 0.96f;
+    			}
 
 
-            if (Input.GetButton("BoostFront"))
+                if (Input.GetButton("BoostFront"))
 
-            {
-                //print("BoostFront");
-                //m_MoveDir.z = 1;
-				desiredMove = desiredMove + (m_Camera.transform.rotation * Vector3.forward);
+                {
+                    //print("BoostFront");
+                    //m_MoveDir.z = 1;
+    				desiredMove = desiredMove + (m_Camera.transform.rotation * Vector3.forward);
+                }
+                if (Input.GetButton("BoostBack"))
+
+                {
+                    //print("BoostBack");
+                    //m_MoveDir.z = -1;
+    				desiredMove = desiredMove + (m_Camera.transform.rotation * Vector3.back);
+                }
+                if (Input.GetButton("BoostLeft"))
+
+                {
+                    //print("BoostLeft");
+                    //m_MoveDir.x = 1;
+    				desiredMove = desiredMove + (m_Camera.transform.rotation * Vector3.left);
+                }
+                if (Input.GetButton("BoostRight"))
+
+                {
+                    //print("BoostRight");
+                    //m_MoveDir.x = -1;
+    				desiredMove = desiredMove + (m_Camera.transform.rotation * Vector3.right);
+
+                }
+
+                //if (m_CharacterController.isGrounded)
+                //{
+                    //m_MoveDir.y = -m_StickToGroundForce;
+
+    //                if (m_Jump)
+    //                {
+    //                    //m_MoveDir.y = m_JumpSpeed;
+    //					m_MoveDir = m_Camera.transform.forward * m_JumpSpeed;
+    //
+    //                    PlayJumpSound();
+    //                    m_Jump = false;
+    //                    m_Jumping = true;
+    //                }
+                /*}
+                else
+                {
+                    m_MoveDir += Physics.gravity*m_GravityMultiplier*Time.fixedDeltaTime;
+                }*/
+
+    			m_MoveDir.x = desiredMove.x*speed;
+    			m_MoveDir.z = desiredMove.z*speed;
+    			m_MoveDir.y = desiredMove.y * speed;
             }
-            if (Input.GetButton("BoostBack"))
-
-            {
-                //print("BoostBack");
-                //m_MoveDir.z = -1;
-				desiredMove = desiredMove + (m_Camera.transform.rotation * Vector3.back);
-            }
-            if (Input.GetButton("BoostLeft"))
-
-            {
-                //print("BoostLeft");
-                //m_MoveDir.x = 1;
-				desiredMove = desiredMove + (m_Camera.transform.rotation * Vector3.left);
-            }
-            if (Input.GetButton("BoostRight"))
-
-            {
-                //print("BoostRight");
-                //m_MoveDir.x = -1;
-				desiredMove = desiredMove + (m_Camera.transform.rotation * Vector3.right);
-
-            }
-            //if (m_CharacterController.isGrounded)
-            //{
-                //m_MoveDir.y = -m_StickToGroundForce;
-
-//                if (m_Jump)
-//                {
-//                    //m_MoveDir.y = m_JumpSpeed;
-//					m_MoveDir = m_Camera.transform.forward * m_JumpSpeed;
-//
-//                    PlayJumpSound();
-//                    m_Jump = false;
-//                    m_Jumping = true;
-//                }
-            /*}
-            else
-            {
-                m_MoveDir += Physics.gravity*m_GravityMultiplier*Time.fixedDeltaTime;
-            }*/
-
-			m_MoveDir.x = desiredMove.x*speed;
-			m_MoveDir.z = desiredMove.z*speed;
-			m_MoveDir.y = desiredMove.y * speed;
 
             m_CollisionFlags = m_CharacterController.Move(m_MoveDir*Time.fixedDeltaTime);
 
@@ -315,5 +320,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
 		public void setCursorLock(bool locked) {
 			m_MouseLook.SetCursorLock (locked);
 		}
+
+        public void setControllable(bool con) {
+            inControl = con;
+        }
+
+        public Vector3 getMoveSpeed() {
+            return m_MoveDir;
+        }
     }
 }

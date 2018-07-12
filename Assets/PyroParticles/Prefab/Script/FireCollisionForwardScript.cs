@@ -20,6 +20,8 @@ namespace DigitalRuby.PyroParticles
 
         public void OnCollisionEnter(Collision col)
         {
+            Debug.Log("" + gameObject + col.collider.name + 
+                "\nSpeed: " + col.relativeVelocity);
             CollisionHandler.HandleCollision(gameObject, col);
         }
     }

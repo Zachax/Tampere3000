@@ -21,8 +21,11 @@ public class MeteorBehaviour : MonoBehaviour {
 	}
 
 	public void OnCollisionEnter(Collision col)
-	{
+    {
+        GameObject explosion = GameObject.Instantiate (explosionPrefab, transform.position, Random.rotation);
+        explosion.GetComponent<ParticleSystem>().Play();
+        GetComponent<AudioSource>().Play();
+        //Debug.Log("Partic: " + explosion.GetComponent<ParticleSystem>() + " Audio: " + GetComponent<AudioSource>());
 		GameObject.Destroy (gameObject);
-		GameObject explosion = GameObject.Instantiate (explosionPrefab, transform.position, Random.rotation);
 	}
 }

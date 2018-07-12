@@ -229,7 +229,7 @@ public class AITalkTriggerer : MonoBehaviour {
             }
             else if (talker.isPlaying() && eventSaid < 2)
             {
-                Debug.Log("AITalk: 3rd event check");
+                //Debug.Log("AITalk: 3rd event check");
                 eventDelay = baseDelay / 8;
             }
             else if (talker.isPlaying())

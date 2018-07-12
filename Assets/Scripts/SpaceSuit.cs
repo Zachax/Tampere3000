@@ -21,7 +21,7 @@ public class SpaceSuit : MonoBehaviour {
             bool suitOn = spaceSuit.activeSelf;
             spaceSuit.SetActive(!suitOn);
             GM.SetSpaceSuitOn(suitOn);
-            Debug.Log("Suit is " + suitOn);
+            //Debug.Log("Suit is " + suitOn);
         }
     }
 

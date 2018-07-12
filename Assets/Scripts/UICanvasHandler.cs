@@ -10,6 +10,7 @@ public class UICanvasHandler : MonoBehaviour {
 	public Text healthValueUI;
 	public Text staminaValueUI;
 	public Text hintTextUI;
+    public Text hintTextHighUI;
     public Text suitOxygenValueUI;
 	public Image darkOverlay;
 	public GameObject gameOverMenu;
@@ -69,6 +70,13 @@ public class UICanvasHandler : MonoBehaviour {
 		}
 	}
 
+    void updateHintTextHigh() {
+        string text = GM.GetHintTextHigh ();
+        if (hintTextHighUI.text != text) {
+            hintTextHighUI.text = text;
+        }
+    }
+
 	void OnStateChange () {
 		float staminaValue = GM.GetPlayerStamina ();
 		setStaminaValue (staminaValue);
@@ -90,6 +98,7 @@ public class UICanvasHandler : MonoBehaviour {
 		updateGameOverMenuVisibility (healthValue);
 
 		updateHintText ();
+        updateHintTextHigh();
 	}
 
 	public void OnRestartButtonClick () {

@@ -50,6 +50,7 @@ public class IlmalukkoSisempi : MonoBehaviour
             thedoor = GameObject.FindWithTag("SF_Door");
             thedoor.GetComponent<Animation>().Play("close");
         }
+        GM.SetHintText("");
     }
 }
 

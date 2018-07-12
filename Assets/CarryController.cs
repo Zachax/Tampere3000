@@ -20,7 +20,7 @@ public class CarryController : MonoBehaviour {
 		// Set object on sight
 		Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
 		RaycastHit hit;
-		if (Physics.Raycast (ray, out hit, 1.5f)) {
+		if (Physics.Raycast (ray, out hit, 2.5f)) {
 			Carryable c = hit.collider.gameObject.GetComponent<Carryable> ();
 			if (c != null) {
 				GM.SetObjectOnSight(c);

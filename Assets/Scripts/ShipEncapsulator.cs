@@ -35,4 +35,8 @@ public class ShipEncapsulator : MonoBehaviour {
     void OnTriggerExit(Collider col) {
         Debug.Log("Outside ship");
     }
+
+    void OnCollisionEnter(Collision col) {
+        Debug.Log("Hitting something.\n" + this.name + "\n" + col.collider.name);
+    }
 }

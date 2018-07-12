@@ -10,7 +10,8 @@ public class GameManager : MonoBehaviour {
 
 	// Handle GameManager instance & other meta stuff
 	public event OnStateChangeHandler OnStateChange;
-	public State gameState = new State();
+	//public State gameState = new State();
+    public State gameState;
 	public bool hasStateChangedSinceLastUpdate = false;
 	public void StateChanged(){
 		hasStateChangedSinceLastUpdate = true;
@@ -26,9 +27,14 @@ public class GameManager : MonoBehaviour {
 	private FirstPersonController fpsController;
     private SpaceSuit spaceSuit;
     private ShipInsideDetector voidSensor;
+    private ShipDamageManager sDamMan;
     private string textHint;
     public const string statusOk = "Status OK";
-	// Meta ends
+
+    // Can lose normal control
+    public bool controlCanBeLost;
+
+    // Meta ends
 
 
 	//////////////////////////////////////////
@@ -60,6 +66,13 @@ public class GameManager : MonoBehaviour {
 	public float GetPlayerHealth(){
 		return gameState.playerHealth;
 	}
+
+    public void SetPlayerControllable(bool control) {
+        if (controlCanBeLost) {
+            fpsController.setControllable(control);
+            StateChanged();
+        }
+    }
 
 
 	// Player stamina
@@ -112,21 +125,35 @@ public class GameManager : MonoBehaviour {
     }
 
     public float GetSuitOxygen() {
-        return gameState.suitOxygen;
+        if (gameState != null) {
+            return gameState.suitOxygen;
+        } else {
+            return 0f;
+        }
     }
 
     public void IncreaseSuitOxygenLevelBy(float increment){
-        // Decrease but only to 1
-        gameState.suitOxygen = Mathf.Max(1f, gameState.suitOxygen + increment);
-        StateChanged();
+        if (gameState != null) {
+            // Decrease but only to 1
+            gameState.suitOxygen = Mathf.Max(1f, gameState.suitOxygen + increment);
+            StateChanged();
+        }
     }
 
 	public bool IsOxygenLevelDangerous() {
-		return gameState.oxygenLevel < 0.2f;
+        if (gameState != null) {
+		    return gameState.oxygenLevel < 0.2f;
+        } else {
+            return false;
+        }
 	}
 
 	public bool IsShipOxygenDeviceBroken() {
-		return gameState.isShipOxygenDeviceBroken;
+        if (gameState != null) {
+		    return gameState.isShipOxygenDeviceBroken;
+        } else {
+            return false;
+        }
 	}
 
 	public void RepairOxygenDevice() {
@@ -158,6 +185,7 @@ public class GameManager : MonoBehaviour {
 
     public void SetPlayerOutside(bool outside) {
         gameState.playerInVoid = outside;
+        StateChanged();
     }
 
     // Ship
@@ -170,6 +198,13 @@ public class GameManager : MonoBehaviour {
 
     public float GetShipIntegrity() {
         return gameState.shipIntegrity;
+    }
+
+    public void DamageToShip(string unit, float force, string tag) {
+        if (unit != null && sDamMan != null) {
+            sDamMan.DamageShipPart(unit, force, tag);
+            StateChanged();
+        }
     }
 
 	// Should the warning beacons be on?
@@ -275,6 +310,16 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    public string GetHintTextHigh() {
+        return gameState.hintTextHigh;
+    }
+
+    public void SetHintTextHigh(string text) {
+        if (text != null) {
+            gameState.hintTextHigh = text;
+        }
+    }
+
 
 	// Events
 
@@ -309,7 +354,11 @@ public class GameManager : MonoBehaviour {
     }
 
 	public bool IsPlantOnFire() {
-		return gameState.fireStarted && !gameState.fireStopped;
+        if (gameState != null) {
+    		return gameState.fireStarted && !gameState.fireStopped;
+        } else {
+            return false;
+        }
 	}
 
 	public bool IsFireStopped() {
@@ -392,6 +441,19 @@ public class GameManager : MonoBehaviour {
         } else {
             return false;
         }
+    }
+
+    // Clears hint text after every 5 seconds. Never ends.
+    void StartHintTextClearer() {
+        StartCoroutine(DelayedHintTextClear());
+    }
+
+    IEnumerator DelayedHintTextClear()
+    {
+        yield return new WaitForSeconds (5f);
+        UpdateHint("");
+        StateChanged ();
+        StartHintTextClearer();
     }
 
 	// Update loop
@@ -488,10 +550,15 @@ public class GameManager : MonoBehaviour {
 		fpsController = GameObject.Find ("FPSController").GetComponent<FirstPersonController> ();
         spaceSuit = GameObject.Find("IlmaOsa").GetComponent<SpaceSuit>();
         voidSensor = GameObject.Find("ShipInsides").GetComponent<ShipInsideDetector>();
+        sDamMan = GameObject.Find("Ship Damage Manager").GetComponent<ShipDamageManager>();
+        // This would clear up hint text as backup every now and then, 
+        // but it should not be necessary, if all works otherwise:
+        //StartHintTextClearer();
 	}
 
-	void Awake() {
-		StateChanged ();
+    void Awake() {
+        gameState = this.GetComponent<State>();
+        StateChanged ();
 	}
 
 	public void RestartGame() {

@@ -12,7 +12,8 @@ using System;
 public class TalkPlayer : MonoBehaviour {
 
 	public Sound[] sounds;
-	public Boolean talkEnabled;
+	public bool talkEnabled;
+    public bool debugNotes;
 
 	//public static TalkPlayer instance;
 
@@ -57,7 +58,7 @@ public class TalkPlayer : MonoBehaviour {
 			pause.clip = n.clip;
 			pause.volume = n.volume;
 		} else {
-			Debug.Log("Warning: Pause clip not found.");
+            notify("Warning: Pause clip not found.", true);
 		}
 
 	}
@@ -72,7 +73,7 @@ public class TalkPlayer : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.P))
         {
             talkEnabled = !talkEnabled;
-            print("Talk is enabled: " + talkEnabled);
+            notify("Talk is enabled: " + talkEnabled);
         }
 
         if (!talkEnabled && current.isPlaying) {
@@ -96,12 +97,12 @@ public class TalkPlayer : MonoBehaviour {
 
 					current.clip = s.clip;
 					current.PlayDelayed (1.2f);
-					print ("TalkPlayer plays: " + name + " at volume " + s.volume);
+                    notify("TalkPlayer plays: " + name + " at volume " + s.volume);
 				} else {
-					Debug.LogWarning ("Sound '" + name + "' not found!");
+                    notify("Sound '" + name + "' not found!", true);
 				}
 			} else {
-				Debug.LogWarning ("Sound list not found!");
+                notify("Sound list not found!", true);
 			}
 		}
 	}
@@ -133,7 +134,7 @@ public class TalkPlayer : MonoBehaviour {
 			}
 		} else {
 			Play (name, 4);
-			Debug.Log("Warning: Randomized sound was set illegaly.");
+            notify("Warning: Randomized sound was set illegaly.");
 		}
 	}
 
@@ -144,4 +145,22 @@ public class TalkPlayer : MonoBehaviour {
 	public float currentLength() {
 		return current.clip.length;
 	}
+
+    // Basic notification
+    private void notify(string text) {
+        if (debugNotes && text != null) {
+            notify(text, false);
+        }
+    }
+
+    // Notification with warning feature
+    private void notify(string text, bool warning) {
+        if (debugNotes && text != null) {
+            if (!warning) {
+                Debug.Log(text);
+            } else {
+                Debug.LogWarning(text);
+            }
+        }
+    }
 }
